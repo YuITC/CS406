@@ -18,24 +18,17 @@ def create_noise_image(image):
         return np.clip(image + np.random.normal(mean, sigma, image.shape), 0, 255).astype(np.uint8)
     
     def add_SAP_noise(image, salt_prob=0.01, pepper_prob=0.01):
-        noised_image = np.copy(image)
-        h, w = image.shape[:2]
+        def apply_noise(image, prob, value):
+            noised_image = np.copy(image)
+            h, w = image.shape[:2]
+            num_noise = np.ceil(prob * h * w).astype(int)
+            coords = [np.random.randint(0, i, num_noise) for i in (h, w)]
+            
+            noised_image[coords[0], coords[1]] = value if len(image.shape) == 2 else [value] * 3
+            return noised_image
     
-        num_salt = np.ceil(salt_prob * h * w).astype(int)
-        coords = [np.random.randint(0, i, num_salt) for i in image.shape[:2]]
-        if len(image.shape) == 3:
-            for i in range(3):
-                noised_image[coords[0], coords[1], i] = 255
-        else:
-            noised_image[coords[0], coords[1]] = 255
-    
-        num_pepper = np.ceil(pepper_prob * h * w).astype(int)
-        coords = [np.random.randint(0, i, num_pepper) for i in image.shape[:2]]
-        if len(image.shape) == 3:
-            for i in range(3):
-                noised_image[coords[0], coords[1], i] = 0
-        else:
-            noised_image[coords[0], coords[1]] = 0
+        noised_image = apply_noise(image, salt_prob, 255)
+        noised_image = apply_noise(noised_image, pepper_prob, 0)
     
         return noised_image
 
