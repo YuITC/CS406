@@ -31,7 +31,7 @@ def main():
             upload   = st.file_uploader('Choose your image:', type=['jpg', 'jpeg', 'png'])
             base_img = np.array(Image.open(upload)) if upload is not None else base_img
         else:
-            base_img = np.array(Image.open('data/cecilia-color.jpg'))
+            base_img = np.array(Image.open('LAB03/data/cecilia-color.jpg'))
 
     # -------------------------------------------------------------------------------------------------------------------------------
     if base_img is not None:
