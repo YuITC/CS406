@@ -20,15 +20,23 @@ def create_noise_image(image):
     def add_SAP_noise(image, salt_prob=0.01, pepper_prob=0.01):
         noised_image = np.copy(image)
         h, w = image.shape[:2]
-        
+    
         num_salt = np.ceil(salt_prob * h * w).astype(int)
-        coords   = [np.random.randint(0, i, num_salt) for i in image.shape[:2]]
-        noised_image[coords[0], coords[1]] = [255] if len(image.shape) == 2 else [255, 255, 255]
-
+        coords = [np.random.randint(0, i, num_salt) for i in image.shape[:2]]
+        if len(image.shape) == 3:
+            for i in range(3):
+                noised_image[coords[0], coords[1], i] = 255
+        else:
+            noised_image[coords[0], coords[1]] = 255
+    
         num_pepper = np.ceil(pepper_prob * h * w).astype(int)
-        coords     = [np.random.randint(0, i, num_pepper) for i in image.shape[:2]]
-        noised_image[coords[0], coords[1]] = [0] if len(image.shape) == 2 else [0, 0, 0]
-
+        coords = [np.random.randint(0, i, num_pepper) for i in image.shape[:2]]
+        if len(image.shape) == 3:
+            for i in range(3):
+                noised_image[coords[0], coords[1], i] = 0
+        else:
+            noised_image[coords[0], coords[1]] = 0
+    
         return noised_image
 
     gaussian_noise    = add_gauss_noise(image)
